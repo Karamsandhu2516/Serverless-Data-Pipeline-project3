@@ -20,29 +20,74 @@ This project provisions a robust, serverless infrastructure on AWS using **Terra
 ```mermaid
 %%{init: {'theme': 'dark', 'themeVariables': { 'primaryColor': '#1e1e1e', 'primaryTextColor': '#fff', 'primaryBorderColor': '#ff9900', 'lineColor': '#8a94a6', 'fontFamily': 'Inter, sans-serif'}}}%%
 graph TD
-    classDef s3 fill:#3b593f,stroke:#66a54f,stroke-width:2px,color:#fff;
-    classDef lambda fill:#854b2a,stroke:#d86613,stroke-width:2px,color:#fff;
-    classDef ddb fill:#264a85,stroke:#4481eb,stroke-width:2px,color:#fff;
-    classDef sqs fill:#753151,stroke:#e5457a,stroke-width:2px,color:#fff;
-    classDef cw fill:#652b47,stroke:#c4476d,stroke-width:2px,color:#fff;
-    classDef user fill:#2c2c2c,stroke:#ffffff,stroke-width:2px,color:#fff;
+    Internet((🌐 Internet)):::user --> IGW
 
-    Client((User / System)):::user -->|Uploads JSON File| S3[("Amazon S3 (Ingestion)")]:::s3
-    
-    subgraph "AWS Serverless Infrastructure"
-        S3 -->|S3 Event Notification| L(AWS Lambda Processor):::lambda
-        L -->|PutItem| DB[("Amazon DynamoDB (Table)")]:::ddb
-        L -.->|Send Message| DLQ["Amazon SQS (DLQ)"]:::sqs
-        L -.->|Metric: Errors| CW(("Amazon CloudWatch Alarm")):::cw
-        CW -.->|Publish Notification| SNS["Amazon SNS (Topic)"]:::cw
+    subgraph VPC ["VPC"]
+        IGW["🚪 Internet Gateway (IGW)"]:::igw
+
+        IGW --> ALB["⚖️ Application Load Balancer (ALB)"]:::alb
+        
+        subgraph AZ1 ["AZ-1"]
+            subgraph PubSub1 ["Public Subnet (10.0.1.0/24)"]
+                NAT["🔄 NAT Gateway"]:::nat
+            end
+            subgraph PrivApp1 ["Private App Subnet (10.0.11.0/24)"]
+                EC2_1["💻 EC2 Instance"]:::ec2
+            end
+            subgraph PrivData1 ["Private Data Subnet (10.0.21.0/24)"]
+                RDS_1["🗄️ RDS MySQL (Primary)"]:::rds
+            end
+        end
+
+        subgraph AZ2 ["AZ-2"]
+            subgraph PubSub2 ["Public Subnet (10.0.2.0/24)"]
+                Placeholder[" "]:::hidden
+            end
+            subgraph PrivApp2 ["Private App Subnet (10.0.12.0/24)"]
+                EC2_2["💻 EC2 Instance"]:::ec2
+            end
+            subgraph PrivData2 ["Private Data Subnet (10.0.22.0/24)"]
+                RDS_2["🗄️ RDS MySQL (Standby/Replica)"]:::rds
+            end
+        end
+
+        %% Auto Scaling Group Note
+        ASG_NOTE>Auto Scaling Group]:::asg_note
     end
+
+    %% Connections
+    ALB --> EC2_1
+    ALB --> EC2_2
+    EC2_1 -.-> NAT
+    NAT -.-> IGW
+    EC2_1 --> RDS_1
+    EC2_2 --> RDS_2
+    RDS_1 -.->|Replication| RDS_2
     
-    style AWS Serverless Infrastructure fill:#141414,stroke:#333,stroke-width:1px,stroke-dasharray: 5 5,color:#aaa;
+    EC2_1 -.- ASG_NOTE
+    EC2_2 -.- ASG_NOTE
+
+    %% Styles
+    classDef user fill:#2c2c2c,stroke:#ffffff,stroke-width:2px,color:#fff;
+    classDef igw fill:#652b47,stroke:#c4476d,stroke-width:2px,color:#fff;
+    classDef alb fill:#753151,stroke:#e5457a,stroke-width:2px,color:#fff;
+    classDef nat fill:#753151,stroke:#e5457a,stroke-width:2px,color:#fff;
+    classDef ec2 fill:#854b2a,stroke:#d86613,stroke-width:2px,color:#fff;
+    classDef rds fill:#264a85,stroke:#4481eb,stroke-width:2px,color:#fff;
+    classDef hidden fill:none,stroke:none,color:none;
+    classDef asg_note fill:none,stroke:#d86613,stroke-width:2px,stroke-dasharray: 5 5,color:#d86613;
+
+    style VPC fill:#141414,stroke:#333,stroke-width:2px,color:#aaa;
+    style AZ1 fill:none,stroke:#333,stroke-width:1px,stroke-dasharray: 5 5;
+    style AZ2 fill:none,stroke:#333,stroke-width:1px,stroke-dasharray: 5 5;
+    style PubSub1 fill:#1a2b1f,stroke:#2d5c39,stroke-width:1px;
+    style PubSub2 fill:#1a2b1f,stroke:#2d5c39,stroke-width:1px;
+    style PrivApp1 fill:#1a202c,stroke:#2b4365,stroke-width:1px;
+    style PrivApp2 fill:#1a202c,stroke:#2b4365,stroke-width:1px;
+    style PrivData1 fill:#1a202c,stroke:#2b4365,stroke-width:1px;
+    style PrivData2 fill:#1a202c,stroke:#2b4365,stroke-width:1px;
 ```
 
-> **Note:** The diagram above is rendered using Mermaid JS. For a highly stylized visual like the reference image (with glowing paths and official AWS 3D isometric icons), you can import this architecture into tools like [Draw.io (AWS Dark Theme)](https://app.diagrams.net/), [Lucidchart](https://www.lucidchart.com/), or [Brainboard](https://www.brainboard.co/).
-
----
 
 ## 🚀 Key Components
 
@@ -108,17 +153,3 @@ terraform apply
    aws s3 cp data.json s3://<your-bucket-name>/
    ```
 4. Navigate to **DynamoDB** in the AWS Console to verify that the record was successfully inserted!
-
----
-
-## 🧹 Cleanup
-
-To tear down the infrastructure and avoid incurring future AWS charges:
-
-```bash
-terraform destroy
-```
-
-<div align="center">
-  <i>Built with ❤️ using Terraform & AWS</i>
-</div>
