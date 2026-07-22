@@ -27,14 +27,14 @@ graph TD
     classDef cw fill:#652b47,stroke:#c4476d,stroke-width:2px,color:#fff;
     classDef user fill:#2c2c2c,stroke:#ffffff,stroke-width:2px,color:#fff;
 
-    Client((User / System)):::user -->|Uploads JSON File| S3[("Amazon S3<br>(Ingestion Bucket)")]:::s3
+    Client((User / System)):::user -->|Uploads JSON File| S3[("Amazon S3 (Ingestion)")]:::s3
     
     subgraph "AWS Serverless Infrastructure"
-        S3 -->|S3 Event Notification| L(fa:fa-bolt AWS Lambda<br>Data Processor):::lambda
-        L -->|PutItem (Valid Records)| DB[("Amazon DynamoDB<br>(Transactions Table)")]:::ddb
-        L -.->|Send Message (Failures)| DLQ>Amazon SQS<br>Dead Letter Queue]:::sqs
-        L -.->|Metric: Errors > 0| CW(("Amazon CloudWatch<br>Alarm")):::cw
-        CW -.->|Publish Notification| SNS[{"Amazon SNS<br>Topic"}]:::cw
+        S3 -->|S3 Event Notification| L(AWS Lambda Processor):::lambda
+        L -->|PutItem| DB[("Amazon DynamoDB (Table)")]:::ddb
+        L -.->|Send Message| DLQ["Amazon SQS (DLQ)"]:::sqs
+        L -.->|Metric: Errors| CW(("Amazon CloudWatch Alarm")):::cw
+        CW -.->|Publish Notification| SNS["Amazon SNS (Topic)"]:::cw
     end
     
     style AWS Serverless Infrastructure fill:#141414,stroke:#333,stroke-width:1px,stroke-dasharray: 5 5,color:#aaa;
