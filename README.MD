@@ -26,7 +26,7 @@ This project provisions a robust, serverless infrastructure on AWS using **Terra
 ![Serverless S3 Bucket Diagram](images/s3-bucket.png)
 
 *   ⚡ **AWS Lambda (Python 3.9)**: Triggered automatically upon file creation. Fetches the JSON file, parses the data, and validates records.
-![Serverless Lambda Diagram](images/lambda.png)
+![Serverless Lambda Diagram](images/Lambda.png)
 
 *   🗄️ **Amazon DynamoDB**: NoSQL database provisioned in `PAY_PER_REQUEST` (On-Demand) mode. Stores valid transactions using `transaction_id` as the partition key.
 ![Amazon DynamoDB Architecture Diagram](images/dynamodb.png)
