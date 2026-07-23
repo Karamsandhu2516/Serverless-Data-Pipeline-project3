@@ -38,7 +38,7 @@ This project provisions a robust, serverless infrastructure on AWS using **Terra
 
 *   🔔 **CloudWatch & SNS**: An alarm monitors Lambda execution errors and triggers an SNS notification if failures occur.
 ![CloudWatch Architecture Diagram](images/cloudwatch.png)
-![CloudWatch logs Diagram](images/cloudwatch_logs.png)
+![CloudWatch logs Diagram](images/cloudwatch-logs.png)
 
 
 ---
