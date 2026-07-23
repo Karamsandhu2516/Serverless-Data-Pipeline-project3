@@ -23,7 +23,7 @@ This project provisions a robust, serverless infrastructure on AWS using **Terra
 ## 🚀 Key Components
 
 *   📦 **Amazon S3**: Ingestion point for transaction data files. Versioning is enabled to preserve history.
-![Serverless S3 Bucket Diagram](images/s3-bucket.png)
+![Serverless S3 Bucket Diagram](images/S3-bucket.png)
 
 *   ⚡ **AWS Lambda (Python 3.9)**: Triggered automatically upon file creation. Fetches the JSON file, parses the data, and validates records.
 ![Serverless Lambda Diagram](images/Lambda.png)
@@ -34,7 +34,6 @@ This project provisions a robust, serverless infrastructure on AWS using **Terra
 
 *   🛡️ **Amazon SQS (Dead Letter Queue)**: Captures unprocessable payloads if the Lambda function fails repeatedly, preventing data loss. 
 ![Amazon SQS Architecture Diagram](images/sqs.png)
-
 
 *   🔔 **CloudWatch & SNS**: An alarm monitors Lambda execution errors and triggers an SNS notification if failures occur.
 ![CloudWatch Architecture Diagram](images/cloudwatch.png)
