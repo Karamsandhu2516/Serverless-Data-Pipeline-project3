@@ -33,7 +33,7 @@ This project provisions a robust, serverless infrastructure on AWS using **Terra
 
 
 *   🛡️ **Amazon SQS (Dead Letter Queue)**: Captures unprocessable payloads if the Lambda function fails repeatedly, preventing data loss. 
-![Amazon SQS Architecture Diagram](images/sqs.png)
+![Amazon SQS Architecture Diagram](images/SQS.png)
 
 *   🔔 **CloudWatch & SNS**: An alarm monitors Lambda execution errors and triggers an SNS notification if failures occur.
 ![CloudWatch Architecture Diagram](images/cloudwatch.png)
