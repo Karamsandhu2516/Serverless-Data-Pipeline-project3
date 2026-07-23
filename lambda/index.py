@@ -3,6 +3,7 @@ import urllib.parse
 import boto3
 import os
 import logging
+from decimal import Decimal
 
 # Initialize AWS SDK clients
 s3 = boto3.client('s3')
@@ -26,21 +27,22 @@ def lambda_handler(event, context):
         # Fetch the uploaded file from S3
         response = s3.get_object(Bucket=bucket, Key=key)
         file_content = response['Body'].read().decode('utf-8')
-        data = json.loads(file_content)
+        
+        # parse_float=Decimal ensures all floats in JSON are converted to DynamoDB-compatible Decimals
+        data = json.loads(file_content, parse_float=Decimal)
 
         # Parse and write to DynamoDB
         table = dynamodb.Table(TABLE_NAME)
         
-        # If the file contains a list of records or a single record
+        # Handle single record or list of records
         records = data if isinstance(data, list) else [data]
         
         for record in records:
-            # Basic validation
             if 'transaction_id' in record and 'timestamp' in record:
                 table.put_item(Item=record)
                 logger.info(f"Successfully inserted transaction: {record['transaction_id']}")
             else:
-                logger.warning(f"Skipping invalid record missing transaction_id or timestamp: {record}")
+                logger.warning(f"Skipping record missing transaction_id or timestamp: {record}")
 
         return {
             'statusCode': 200,
@@ -49,6 +51,4 @@ def lambda_handler(event, context):
 
     except Exception as e:
         logger.error(f"Error processing file {key} from bucket {bucket}: {str(e)}")
-        # Raising exception ensures Lambda fails and triggers SQS DLQ retry/alarm handling
         raise e
-        

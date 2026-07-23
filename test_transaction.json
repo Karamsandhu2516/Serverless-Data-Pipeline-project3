@@ -1,0 +1,7 @@
+{
+  "transaction_id": "TXN_1001",
+  "timestamp": "2026-07-22T20:30:00Z",
+  "amount": 250.75,
+  "currency": "USD",
+  "status": "COMPLETED"
+}

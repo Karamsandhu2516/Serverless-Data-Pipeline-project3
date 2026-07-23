@@ -1,0 +1,24 @@
+# Local .terraform directories
+**/.terraform/*
+.terraform/
+
+# .tfstate files (contain sensitive infrastructure data)
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+
+# Ignore zip files generated locally by archive_file
+*.zip
+lambda/*.zip
+
+# Ignore local variable override files if any
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# OS files
+.DS_Store

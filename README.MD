@@ -23,10 +23,23 @@ This project provisions a robust, serverless infrastructure on AWS using **Terra
 ## 🚀 Key Components
 
 *   📦 **Amazon S3**: Ingestion point for transaction data files. Versioning is enabled to preserve history.
+![Serverless S3 Bucket Diagram](images/s3-bucket.png)
+
 *   ⚡ **AWS Lambda (Python 3.9)**: Triggered automatically upon file creation. Fetches the JSON file, parses the data, and validates records.
+![Serverless Lambda Diagram](images/lambda.png)
+
 *   🗄️ **Amazon DynamoDB**: NoSQL database provisioned in `PAY_PER_REQUEST` (On-Demand) mode. Stores valid transactions using `transaction_id` as the partition key.
-*   🛡️ **Amazon SQS (Dead Letter Queue)**: Captures unprocessable payloads if the Lambda function fails repeatedly, preventing data loss.
+![Amazon DynamoDB Architecture Diagram](images/dynamodb.png)
+
+
+*   🛡️ **Amazon SQS (Dead Letter Queue)**: Captures unprocessable payloads if the Lambda function fails repeatedly, preventing data loss. 
+![Amazon SQS Architecture Diagram](images/sqs.png)
+
+
 *   🔔 **CloudWatch & SNS**: An alarm monitors Lambda execution errors and triggers an SNS notification if failures occur.
+![CloudWatch Architecture Diagram](images/cloudwatch.png)
+![CloudWatch logs Diagram](images/cloudwatch_logs.png)
+
 
 ---
 

@@ -7,7 +7,7 @@ variable "aws_region" {
 variable "s3_bucket_name" {
     type = string
     description = "Name of the S3 bucket"
-    default = "project3-bucket"
+    default = "karam-project3-bucket"
 }
 
 variable "s3_bucket_versioning" {

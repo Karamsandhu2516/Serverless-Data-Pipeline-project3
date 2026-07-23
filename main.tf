@@ -53,6 +53,10 @@ resource "aws_lambda_function" "demo-lambda" {
   dead_letter_config {
     target_arn = aws_sqs_queue.demo-queue.arn
   }
+
+  depends_on = [
+    aws_iam_role_policy.lambda_policy
+  ]
 }
 
 resource "aws_sqs_queue" "demo-queue" {
